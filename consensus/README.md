@@ -64,3 +64,12 @@ Install consensus dependencies locally with:
 ```bash
 pip install -r consensus/requirements.txt
 ```
+
+## Quick local smoke test (single process)
+
+If you want to see the 2PC flow without opening multiple terminals, use the bundled demo runner. It starts one coordinator and two participants in-process on ports `6100-6102`, triggers a transaction, and then shuts everything down:
+
+```bash
+python -m consensus.demo_runner two-pc-local
+# Add --abort-participant to force p1 to vote abort
+```
