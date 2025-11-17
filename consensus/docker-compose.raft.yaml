@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  raft-node1:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.raft_node run \
+      --node-id 1 --host 0.0.0.0 --port 7101 \
+      --peer 2=raft-node2:7102 --peer 3=raft-node3:7103 --peer 4=raft-node4:7104 --peer 5=raft-node5:7105"
+
+  raft-node2:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.raft_node run \
+      --node-id 2 --host 0.0.0.0 --port 7102 \
+      --peer 1=raft-node1:7101 --peer 3=raft-node3:7103 --peer 4=raft-node4:7104 --peer 5=raft-node5:7105"
+
+  raft-node3:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.raft_node run \
+      --node-id 3 --host 0.0.0.0 --port 7103 \
+      --peer 1=raft-node1:7101 --peer 2=raft-node2:7102 --peer 4=raft-node4:7104 --peer 5=raft-node5:7105"
+
+  raft-node4:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.raft_node run \
+      --node-id 4 --host 0.0.0.0 --port 7104 \
+      --peer 1=raft-node1:7101 --peer 2=raft-node2:7102 --peer 3=raft-node3:7103 --peer 5=raft-node5:7105"
+
+  raft-node5:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.raft_node run \
+      --node-id 5 --host 0.0.0.0 --port 7105 \
+      --peer 1=raft-node1:7101 --peer 2=raft-node2:7102 --peer 3=raft-node3:7103 --peer 4=raft-node4:7104"

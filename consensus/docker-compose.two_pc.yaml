@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  coordinator:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "pip install -r consensus/requirements.txt && python -m consensus.two_pc_node run \
+      --node-id coordinator --phase coordinator --host 0.0.0.0 --port 6100 \
+      --peer n1=participant1:6101 --peer n2=participant2:6102 --peer n3=participant3:6103 --peer n4=participant4:6104 \
+      --auto-start"
+    depends_on:
+      - participant1
+      - participant2
+      - participant3
+      - participant4
+
+  participant1:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "pip install -r consensus/requirements.txt && python -m consensus.two_pc_node run --node-id n1 --phase participant --host 0.0.0.0 --port 6101"
+
+  participant2:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "pip install -r consensus/requirements.txt && python -m consensus.two_pc_node run --node-id n2 --phase participant --host 0.0.0.0 --port 6102"
+
+  participant3:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "pip install -r consensus/requirements.txt && python -m consensus.two_pc_node run --node-id n3 --phase participant --host 0.0.0.0 --port 6103"
+
+  participant4:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "pip install -r consensus/requirements.txt && python -m consensus.two_pc_node run --node-id n4 --phase participant --host 0.0.0.0 --port 6104"

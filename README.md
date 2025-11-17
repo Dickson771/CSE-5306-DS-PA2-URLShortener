@@ -63,6 +63,13 @@ URL shortening transforms long, unwieldy URLs into short, manageable links while
 ```
 CSE-5306-DS-PA2-URLShortener/
 │
+├── Consensus Demos
+│   ├── consensus/README.md                # Assignment 3 overview
+│   ├── consensus/proto/                   # gRPC definitions for 2PC & Raft
+│   ├── consensus/two_pc_node.py           # 2PC coordinator/participant node
+│   ├── consensus/raft_node.py             # Raft node with election + log replication
+│   └── consensus/docker-compose.*.yaml    # Compose stacks with 5 nodes
+│
 ├── Test Files (Your Main Reference)
 │   ├── microservices_http_runs.txt      # All REST API test commands
 │   ├── layered_grpc_runs.txt            # All gRPC test commands
