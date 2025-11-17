@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package consensus;
+
+import "google/protobuf/empty.proto";
+
+message VoteRequest {
+  string transaction_id = 1;
+  string payload = 2;
+  string coordinator_phase = 3;
+  string coordinator_node_id = 4;
+}
+
+message VoteReply {
+  bool commit = 1;
+  string participant_phase = 2;
+  string participant_node_id = 3;
+}
+
+message Decision {
+  string transaction_id = 1;
+  bool commit = 2;
+  string coordinator_phase = 3;
+  string coordinator_node_id = 4;
+}
+
+service TwoPhaseCommit {
+  rpc RequestVote(VoteRequest) returns (VoteReply);
+  rpc Finalize(Decision) returns (google.protobuf.Empty);
+}
