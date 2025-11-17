@@ -152,8 +152,18 @@ def run(
     phase: str = typer.Option("participant", help="Phase name: coordinator or participant"),
     peer: List[str] = typer.Option([], help="Participant nodes in the form id=host:port"),
     payload: str = typer.Option("demo", help="Payload to vote on"),
-    abort_vote: bool = typer.Option(False, help="Force this participant to vote abort"),
-    auto_start: bool = typer.Option(False, help="Automatically start a transaction when coordinator"),
+    abort_vote: bool = typer.Option(
+        False,
+        "--abort-vote",
+        help="Force this participant to vote abort",
+        is_flag=True,
+    ),
+    auto_start: bool = typer.Option(
+        False,
+        "--auto-start",
+        help="Automatically start a transaction when coordinator",
+        is_flag=True,
+    ),
 ) -> None:
     asyncio.run(
         _run_node(
