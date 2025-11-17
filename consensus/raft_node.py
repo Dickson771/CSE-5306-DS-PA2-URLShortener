@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 import grpc
 import typer
 
-from consensus import raft_pb2, raft_pb2_grpc
+from . import raft_pb2, raft_pb2_grpc
 
 
 STATE_FOLLOWER = "follower"
@@ -233,13 +233,7 @@ class RaftNode:
 app = typer.Typer(help="Simplified Raft node")
 
 
-@app.command()
-async def run(
-    node_id: int = typer.Option(..., help="Unique node identifier"),
-    host: str = typer.Option("0.0.0.0", help="Bind host"),
-    port: int = typer.Option(7000, help="Bind port"),
-    peer: List[str] = typer.Option([], help="Peer nodes in the form id=host:port"),
-) -> None:
+async def _run_node(node_id: int, host: str, port: int, peer: List[str]) -> None:
     peers: Dict[int, str] = {}
     for peer_entry in peer:
         peer_id_str, address = peer_entry.split("=", maxsplit=1)
@@ -249,5 +243,15 @@ async def run(
     await asyncio.Event().wait()
 
 
+@app.command()
+def run(
+    node_id: int = typer.Option(..., help="Unique node identifier"),
+    host: str = typer.Option("0.0.0.0", help="Bind host"),
+    port: int = typer.Option(7000, help="Bind port"),
+    peer: List[str] = typer.Option([], help="Peer nodes in the form id=host:port"),
+) -> None:
+    asyncio.run(_run_node(node_id=node_id, host=host, port=port, peer=peer))
+
+
 if __name__ == "__main__":
-    typer.run(run)
+    app()

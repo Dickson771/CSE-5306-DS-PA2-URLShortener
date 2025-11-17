@@ -6,7 +6,7 @@ import grpc
 import typer
 from google.protobuf import empty_pb2
 
-from consensus import two_phase_commit_pb2, two_phase_commit_pb2_grpc
+from . import two_phase_commit_pb2, two_phase_commit_pb2_grpc
 
 
 def log_client(phase: str, node_id: str, rpc_name: str, target_phase: str, target_id: str) -> None:
@@ -123,16 +123,15 @@ class TwoPCNode:
 app = typer.Typer(help="Two-Phase Commit demo node")
 
 
-@app.command()
-async def run(
-    node_id: str = typer.Option(..., help="Unique node identifier"),
-    host: str = typer.Option("0.0.0.0", help="Bind host"),
-    port: int = typer.Option(6000, help="Bind port"),
-    phase: str = typer.Option("participant", help="Phase name: coordinator or participant"),
-    peer: List[str] = typer.Option([], help="Participant nodes in the form id=host:port"),
-    payload: str = typer.Option("demo", help="Payload to vote on"),
-    abort_vote: bool = typer.Option(False, help="Force this participant to vote abort"),
-    auto_start: bool = typer.Option(False, help="Automatically start a transaction when coordinator"),
+async def _run_node(
+    node_id: str,
+    host: str,
+    port: int,
+    phase: str,
+    peer: List[str],
+    payload: str,
+    abort_vote: bool,
+    auto_start: bool,
 ) -> None:
     peers: Dict[str, str] = {}
     for peer_entry in peer:
@@ -145,5 +144,30 @@ async def run(
     await asyncio.Event().wait()
 
 
+@app.command()
+def run(
+    node_id: str = typer.Option(..., help="Unique node identifier"),
+    host: str = typer.Option("0.0.0.0", help="Bind host"),
+    port: int = typer.Option(6000, help="Bind port"),
+    phase: str = typer.Option("participant", help="Phase name: coordinator or participant"),
+    peer: List[str] = typer.Option([], help="Participant nodes in the form id=host:port"),
+    payload: str = typer.Option("demo", help="Payload to vote on"),
+    abort_vote: bool = typer.Option(False, help="Force this participant to vote abort"),
+    auto_start: bool = typer.Option(False, help="Automatically start a transaction when coordinator"),
+) -> None:
+    asyncio.run(
+        _run_node(
+            node_id=node_id,
+            host=host,
+            port=port,
+            phase=phase,
+            peer=peer,
+            payload=payload,
+            abort_vote=abort_vote,
+            auto_start=auto_start,
+        )
+    )
+
+
 if __name__ == "__main__":
-    typer.run(run)
+    app()
